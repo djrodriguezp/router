@@ -16,6 +16,7 @@ class TxChannel(NetChannel):
         
         self.socket.recv()
 
-        while True:
+        alive = True
+        while alive:
             sleep(UPDATE_TIME_SEC)
-            self.messageSender.send(self.socket, "KeepAlive")
+            alive = self.messageSender.send(self.socket, "KeepAlive")

@@ -25,7 +25,12 @@ def read_conf_file(filename):
 
 
 
-read_conf_file("neighbors.conf")
+#read_conf_file("neighbors.conf")
+
+
+
+names = ["a", "b", "c"]
+
 
 
 """

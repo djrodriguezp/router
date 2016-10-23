@@ -4,7 +4,7 @@ class MessageSender:
 
     def send(self, socket, type, body = None):
         headers = self.makeHeaders(type)
-        self.__send(socket, headers, body)
+        return self.__send(socket, headers, body)
 
     def __send(self, socket, headers, body = None):
         if body is None:
@@ -20,6 +20,9 @@ class MessageSender:
             socket.send(message)
         except:
             print "Error :3"
+            return False
+        else:
+            return True
 
     def makeHeaders(self, type):
         return [ ("From", self.origin), ("Type", type) ]
