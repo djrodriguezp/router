@@ -46,7 +46,7 @@ class RoutingLobby(Thread):
                     elif neighbor.tx is None:
                         newSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                         newSock.settimeout(2)
-                        newSock.connect((neighbor.ip, Routing.INSTANCE.ROUTING_PORT))
+                        newSock.connect((neighbor.ip, Routing.Routing.INSTANCE.ROUTING_PORT))
                         neighbor.tx = TxChannel(neighbor.name, MessageSender(Routing.Routing.INSTANCE.SAY_MY_NAME), newSock)
                         neighbor.tx.shortestPathProvider = Routing.Routing.INSTANCE
                         neighbor.tx.start()
