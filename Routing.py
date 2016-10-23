@@ -47,14 +47,17 @@ class DistanceVectorListener:
 class Routing(ShortestPathProvider, DistanceVectorListener):
 
     ROUTING_PORT = 9080
-    say_my_name = "Y"
-    listenOnIp = "192.168.1.20"
-    UPDATE_TIME_SEC = 3
+    SAY_MY_NAME = "NONAME"
+    BIND_IP = "127.0.0.1"
+    UPDATE_TIME_SEC = 30
     table = {}
+
+    INSTANCE = None
 
     shortestPaths = {}
 
     def __init__(self):
+        Routing.INSTANCE = self
         self.neighbors = []
 
     def makeNode(self, nodeData):
@@ -76,12 +79,12 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.neighbors.append(node)
             try:
-                s.connect((node.ip, Routing.ROUTING_PORT))
+                s.connect((node.ip, Routing.INSTANCE.ROUTING_PORT))
             except Exception as e:
                 print "No se pudo establecer conexión tcp con " + node.name + "(" + node.ip + ")"
                 print(e)
             else:
-                node.tx = TxChannel(node.name, MessageSender(Routing.say_my_name), s)
+                node.tx = TxChannel(node.name, MessageSender(Routing.SAY_MY_NAME), s)
                 node.tx.shortestPathProvider = self
 
     def initTable(self):
@@ -96,7 +99,7 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
         self.initTable()
         print self.table
 
-        RoutingLobby(self.listenOnIp, self.ROUTING_PORT, self).start()
+        RoutingLobby(self.BIND_IP, self.ROUTING_PORT, self).start()
 
         for node in filter(lambda x: x.tx is not None, self.neighbors):
             node.tx.start()
@@ -130,10 +133,10 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
             to = line[0]
             cost = int(line[1])
             reportedCost = self.shortestPaths[origin].cost + cost
-            if to not in self.shortestPaths and to != self.say_my_name:
+            if to not in self.shortestPaths and to != self.SAY_MY_NAME:
                 dmap = self.createDistanceMap()
                 dmap[origin] = reportedCost
                 self.table[to] = dmap
                 self.shortestPaths[to] = Path(origin, reportedCost)
-            elif to == self.say_my_name:
+            elif to == self.SAY_MY_NAME:
                 self.table[origin] = cost

@@ -9,7 +9,7 @@ class Forwarding(Thread):
     def __init__(self):
         super(Forwarding, self).__init__()
         self.port = 1981
-        self.address = Routing.listenOnIp
+        self.address = Routing.BIND_IP
 
     def fordwardMessage(self,neighborIP):
         pass
@@ -33,7 +33,7 @@ class Forwarding(Thread):
                     print e.message
                 else:
                     if msg.type == "application":
-                        if msg.to == Routing.say_my_name:
+                        if msg.to == Routing.SAY_MY_NAME:
                             print "mensaje para miguelito recibido :D"
                         else:
                             try:
