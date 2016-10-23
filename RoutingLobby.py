@@ -5,6 +5,8 @@ from RxChannel import RxChannel
 from threading import Thread
 from Message import Message
 from MessageSender import MessageSender
+from TxChannel import TxChannel
+
 
 class RoutingLobby(Thread):
 
@@ -38,4 +40,10 @@ class RoutingLobby(Thread):
                 else:
                     print 'Accepted HELLO from: ', addr
                     RxChannel(msg.origin, MessageSender(Routing.Routing.INSTANCE.SAY_MY_NAME), conn, self.dvListener).start()
-
+                    neighbor = Routing.Routing.INSTANCE.findNeighbor(msg.origin)
+                    if neighbor is None:
+                        pass #TODO: add neighbor
+                    elif neighbor.tx is None:
+                        neighbor.tx = TxChannel(neighbor.name, MessageSender(Routing.Routing.INSTANCE.SAY_MY_NAME), s)
+                        neighbor.tx.shortestPathProvider = Routing.Routing.INSTANCE
+                        neighbor.tx.start()

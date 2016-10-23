@@ -143,3 +143,9 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
                 self.shortestPaths[to] = Path(origin, reportedCost)
             elif to == self.SAY_MY_NAME:
                 self.table[origin] = cost
+
+    def findNeighbor(self, name):
+        for neighbor in self.neighbors:
+            if neighbor.name == name:
+                return neighbor
+        return None
