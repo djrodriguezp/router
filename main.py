@@ -1,7 +1,9 @@
 from Routing import Routing
+from Forwarding import Forwarding
 
 def start():
     Routing().run()
+    Forwarding().run()
 
 start()
 """

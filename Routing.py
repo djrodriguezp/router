@@ -47,8 +47,8 @@ class DistanceVectorListener:
 class Routing(ShortestPathProvider, DistanceVectorListener):
 
     ROUTING_PORT = 9080
-    say_my_name = "0xETSONHUECO"
-    listenOnIp = "192.168.1.20"
+    say_my_name = "0xMiRoutersito"
+    listenOnIp = "192.168.1.18"
     UPDATE_TIME_SEC = 10
     table = {}
 
