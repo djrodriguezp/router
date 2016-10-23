@@ -2,7 +2,6 @@ from Routing import Routing
 from Forwarding import Forwarding
 
 def start():
-    forwardingModule = Forwarding()
     routingModule = Routing()
 
     f = open("router.conf", "r")
@@ -15,6 +14,7 @@ def start():
         elif line.startswith("routerName:"):
             routingModule.SAY_MY_NAME = line.split(":")[1]
     routingModule.run()
+    forwardingModule = Forwarding()
     forwardingModule.run()
 
 start()
