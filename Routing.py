@@ -9,11 +9,18 @@ class Path:
     changed = True
     cost = 99
     neighbor = None
+    alreadySent = []
 
     def __init__(self, neighbor, cost = 99):
         self.neighbor = neighbor
         self.cost = cost
         pass
+
+    def shouldSendUpdate(self, txName):
+        if txName not in self.alreadySent:
+            self.alreadySent.append(txName)
+            return True
+        return False
 
 
 class Node:
@@ -29,7 +36,7 @@ class Node:
 
 class ShortestPathProvider:
 
-    def getNewShortestPaths(self):
+    def getNewShortestPaths(self, txName):
         pass
 
 class DistanceVectorListener:
@@ -92,10 +99,9 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
         RoutingLobby(self.listenOnIp, self.ROUTING_PORT, self).start()
 
         for node in filter(lambda x: x.tx is not None, self.neighbors):
-            node.tx.dvR2SR2Go = self.getNewShortestPaths()
             node.tx.start()
 
-    def getNewShortestPaths(self):
+    def getNewShortestPaths(self, txName):
         #find the shortest path for every known node
         for to in self.table:
             min = self.shortestPaths[to].cost
@@ -109,9 +115,8 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
         lines = []
         for to in self.shortestPaths:
             curr = self.shortestPaths[to]
-            if curr.changed:
+            if curr.shouldSendUpdate(txName):
                 lines.append(to + ":" + str(curr.cost))
-                curr.changed = False
 
         if len(lines) > 0:
             print "The following shortest paths changed: " , lines

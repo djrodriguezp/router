@@ -31,11 +31,12 @@ class TxChannel(NetChannel):
 
     def checkForNewShortestPath(self):
         if self.shortestPathProvider is not None:
-            self.dvR2SR2Go = self.shortestPathProvider.getNewShortestPaths()
+            self.dvR2SR2Go = list(self.shortestPathProvider.getNewShortestPaths(self.name))
+            print "these are the new paths for ", self.name, self.dvR2SR2Go
 
     def sendUpdateIfNeeded(self):
         if len(self.dvR2SR2Go) > 0:
             self.messageSender.send(self.socket, "DV", self.dvR2SR2Go)
-            self.dvR2SR2Go = None
+            self.dvR2SR2Go = []
             return True
         return False
