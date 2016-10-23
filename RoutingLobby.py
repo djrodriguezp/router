@@ -37,4 +37,4 @@ class RoutingLobby(Thread):
                     print e.message
                 else:
                     print 'Accepted HELLO from: ', addr
-                    RxChannel(msg.origin, MessageSender(Routing.Routing.say_my_name), conn, self.dvListener).start()
+                    RxChannel(msg.origin, MessageSender(Routing.Routing.INSTANCE.say_my_name), conn, self.dvListener).start()

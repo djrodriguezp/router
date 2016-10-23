@@ -24,7 +24,7 @@ class TxChannel(NetChannel):
         self.socket.recv(4096)
         success = True
         while self.alive and success:
-            sleep(Routing.Routing.UPDATE_TIME_SEC)
+            sleep(Routing.Routing.INSTANCE.UPDATE_TIME_SEC)
             self.checkForNewShortestPath()
             success = self.alive and (self.sendUpdateIfNeeded() or self.messageSender.send(self.socket, "KeepAlive"))
         print self.name + " Dying :("
