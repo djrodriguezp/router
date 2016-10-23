@@ -44,6 +44,6 @@ class RoutingLobby(Thread):
                     if neighbor is None:
                         pass #TODO: add neighbor
                     elif neighbor.tx is None:
-                        neighbor.tx = TxChannel(neighbor.name, MessageSender(Routing.Routing.INSTANCE.SAY_MY_NAME), s)
+                        neighbor.tx = TxChannel(neighbor.name, MessageSender(Routing.Routing.INSTANCE.SAY_MY_NAME), conn)
                         neighbor.tx.shortestPathProvider = Routing.Routing.INSTANCE
                         neighbor.tx.start()

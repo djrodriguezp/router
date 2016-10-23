@@ -98,11 +98,10 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
             self.shortestPaths[n.name] = Path(n.name, n.cost)
 
     def run(self):
+        RoutingLobby(self.BIND_IP, self.ROUTING_PORT, self).start()
         self.read_conf_file("neighbors.conf")
         self.initTable()
         print self.table
-
-        RoutingLobby(self.BIND_IP, self.ROUTING_PORT, self).start()
 
         for node in filter(lambda x: x.tx is not None, self.neighbors):
             node.tx.start()
