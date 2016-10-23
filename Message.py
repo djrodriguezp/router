@@ -42,12 +42,18 @@ class Message:
                             else:
                                 raise Exception("Invalid header Len -> "+routesLenght)
                         else:
-                            raise Exception("Invalid DV message, no routes in package")
+                            raise Exception("Invalid DV message, no routes found")
                 else:
                     raise Exception("Invalid Type header -> "+headerMatch.group(2))
             else:
                 self.type = "application"
                 self.to = headerMatch.group(2)
-                self.message = list(lines)
+                if len(lines) > 0:
+                    if re.match("^Msg:.*$", lines[0]) is not None:
+                        self.message = list(lines)
+                    else:
+                        raise Exception("Invalid Msg header -> " + lines[0])
+                else:
+                    raise Exception("Invalid application message, no Msg found")
         else:
             raise Exception("Invalid header -> "+header2)

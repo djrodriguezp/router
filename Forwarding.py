@@ -11,14 +11,20 @@ class Forwarding(Thread):
         self.port = 1981
         self.address = Routing.BIND_IP
 
-    def fordwardMessage(self,neighborIP):
-        pass
+    def fordwardMessage(self,neighborIP,data):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            s.connect((neighborIP, self.port))
+            s.send(data)
+        except Exception as e:
+            print "Error forwardeando"
+        s.close()
 
     def run(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((self.address, self.port))
-        print "Running forwarding, listening on "+self.address+":"+self.port
+        print "Running forwarding, listening on "+self.address+":"+str(self.port)
         s.listen(1)
 
         while True:
@@ -37,11 +43,12 @@ class Forwarding(Thread):
                             print "mensaje para miguelito recibido :D"
                         else:
                             try:
-                                route = Routing.shortestPaths[msg.to]
+                                path = Routing.shortestPaths[msg.to]
                             except Exception:
                                 print "No route found to "+msg.to+" dropping message"
                             else:
-                                print "Forwarding message to "+msg.to+" through "+route.neighbor.name+" ip "+route.neighbor.ip
+                                print "Forwarding message to "+msg.to+" through "+path.neighbor+" ip "
+                                self.fordwardMessage("192.168.1.18", data)
                     else:
                         print "Message type "+msg.type+" received on port "+self.port+" from ", addr , " dropping message "
                 conn.close()
