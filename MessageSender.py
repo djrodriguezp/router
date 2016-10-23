@@ -19,7 +19,6 @@ class MessageSender:
         try:
             socket.send(message)
         except:
-            print "Error :3"
             return False
         else:
             return True

@@ -1,4 +1,5 @@
 import socket
+import select
 
 
 TCP_IP = '192.168.1.20'
@@ -12,7 +13,11 @@ s.listen(1)
 conn, addr = s.accept()
 print 'Connection address:', addr
 while 1:
-    data = conn.recv(BUFFER_SIZE)
-    print "received data:", data
-    conn.send(data)  # echo
+    ready = select.select([conn], [], [])
+    if ready[0]:
+        data = conn.recv(BUFFER_SIZE)
+        print "received data:", data
+        conn.send("WELCOME")
+
+
 conn.close()

@@ -1,22 +1,21 @@
 from NetChannel import NetChannel
 from time import sleep
+import Routing
 import socket
-
-UPDATE_TIME_SEC = 3
 
 class TxChannel(NetChannel):
     def __init__(self, name, messageSender, socket):
-        self.socket = socket
         NetChannel.__init__(self, name="TX-"+name)
+        self.socket = socket
         self.messageSender = messageSender
 
     def run(self):
         self.messageSender.send(self.socket, "HELLO")
-
-        
-        self.socket.recv()
-
+        self.socket.recv(4096)
         alive = True
         while alive:
-            sleep(UPDATE_TIME_SEC)
+            sleep(Routing.Routing.UPDATE_TIME_SEC)
             alive = self.messageSender.send(self.socket, "KeepAlive")
+            if not alive:
+                print self.name + " Dying :("
+
