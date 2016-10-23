@@ -35,7 +35,7 @@ class Message:
                                     for line in lines:
                                         if re.match("^\w+:\d+$", line) is None:
                                             raise Exception("Invalid route format -> "+line)
-                                    self.message = lines
+                                    self.message = list(lines)
                                 else:
                                     raise Exception("Len header mismatch with the amount of routes received -> Len:"+headerMatch.group(1)+", routes received:" + str(len(lines)))
                             else:
@@ -47,6 +47,6 @@ class Message:
             else:
                 self.type = "application"
                 self.to = headerMatch.group(2)
-                self.message = lines
+                self.message = list(lines)
         else:
             raise Exception("Invalid header -> "+header2)

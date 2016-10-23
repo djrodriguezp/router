@@ -1,8 +1,8 @@
 import socket
 import select
+import sys
 
-
-TCP_IP = '192.168.1.20'
+TCP_IP = sys.argv[1]
 TCP_PORT = 9080
 BUFFER_SIZE = 1024
 

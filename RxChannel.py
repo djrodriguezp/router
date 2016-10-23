@@ -1,16 +1,33 @@
+from Message import Message
 from NetChannel import NetChannel
-from Routing import Routing
+import Routing
 import select
 
 class RxChannel(NetChannel):
-    def __init__(self, name, messageSender, socket):
+    def __init__(self, name, messageSender, socket, dvListener):
         NetChannel.__init__(self, name = "RX-" + name)
         self.socket = socket
         self.messageSender = messageSender
+        self.dvListener = dvListener
 
 
     def run(self):
+        self.messageSender.send(self.socket, "WELCOME")
         while True:
-            ready = select.select([self.socket], [], [], Routing.UPDATE_TIME_SEC * 3)
+            ready = select.select([self.socket], [], [], Routing.Routing.UPDATE_TIME_SEC * 3)
             if ready[0]:
-                data = self.socket.recv()
+                data = self.socket.recv(1024)
+                try:
+                    msg = Message(data)
+                except Exception as e:
+                    print "Malformed DV or KeepAlive message from ", self.name
+                    print e.message
+                else:
+                    print "received " + msg.type + " message from " + msg.origin
+                    print msg.message
+                    if msg.type == "DV":
+                        self.dvListener.receivedDVMessage(msg.message, msg.origin)
+            else:
+                print "Timeout"
+                break
+        print self.name + " dying :("

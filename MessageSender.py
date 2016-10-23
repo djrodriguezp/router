@@ -15,6 +15,7 @@ class MessageSender:
         message = reduce(appendHeader, headers, "")
         message = reduce(appendBody, body, message)
 
+        print "SENDING:"
         print message
         try:
             socket.send(message)
