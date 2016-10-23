@@ -47,9 +47,9 @@ class DistanceVectorListener:
 class Routing(ShortestPathProvider, DistanceVectorListener):
 
     ROUTING_PORT = 9080
-    say_my_name = "0xETSONHUECO"
+    say_my_name = "Y"
     listenOnIp = "192.168.1.20"
-    UPDATE_TIME_SEC = 10
+    UPDATE_TIME_SEC = 3
     table = {}
 
     shortestPaths = {}
@@ -129,9 +129,11 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
         for line in dvmsg:
             to = line[0]
             cost = int(line[1])
-            if to not in self.shortestPaths:
-                self.shortestPaths[to] = Path(origin, 99)
             reportedCost = self.shortestPaths[origin].cost + cost
-            if reportedCost < self.shortestPaths[to].cost:
+            if to not in self.shortestPaths and to != self.say_my_name:
+                dmap = self.createDistanceMap()
+                dmap[origin] = reportedCost
+                self.table[to] = dmap
                 self.shortestPaths[to] = Path(origin, reportedCost)
-        pass
+            elif to == self.say_my_name:
+                self.table[origin] = cost
