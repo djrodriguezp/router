@@ -79,11 +79,14 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.neighbors.append(node)
             try:
+                print "Trying to connect to ", node.ip, node.name
+                s.settimeout(2)
                 s.connect((node.ip, Routing.INSTANCE.ROUTING_PORT))
             except Exception as e:
                 print "No se pudo establecer conexión tcp con " + node.name + "(" + node.ip + ")"
                 print(e)
             else:
+                print "Connected"
                 node.tx = TxChannel(node.name, MessageSender(Routing.INSTANCE.SAY_MY_NAME), s)
                 node.tx.shortestPathProvider = self
 
