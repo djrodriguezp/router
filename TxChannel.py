@@ -36,6 +36,7 @@ class TxChannel(NetChannel):
 
     def sendUpdateIfNeeded(self):
         if len(self.dvR2SR2Go) > 0:
+            self.dvR2SR2Go = ["Len:"+str(len(self.dvR2SR2Go))] + self.dvR2SR2Go
             self.messageSender.send(self.socket, "DV", self.dvR2SR2Go)
             self.dvR2SR2Go = []
             return True
