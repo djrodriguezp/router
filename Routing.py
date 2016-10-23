@@ -12,13 +12,13 @@ class Node:
 
     def __init__(self, name, cost, ip):
         self.name = name
-        self.cost = cost
+        self.cost = int(cost)
         self.ip = ip
 
 class Routing:
 
     ROUTING_PORT = 9080
-    say_my_name = "0xBEEFBABE"
+    say_my_name = "0xETSONHUECO"
     UPDATE_TIME_SEC = 3
     table = {}
 
@@ -54,9 +54,6 @@ class Routing:
                 print(e)
             else:
                 node.tx = TxChannel(node.name, MessageSender(Routing.say_my_name), s)
-
-
-        print 'sexo'
 
 
     def listen(self):
