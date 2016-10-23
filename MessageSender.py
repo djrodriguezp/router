@@ -2,18 +2,24 @@ class MessageSender:
     def __init__(self, origin):
         self.origin = origin
 
-    def sendHello(self, socket):
-        headers = self.makeHeaders("HELLO")
-        self.send(headers, socket)
+    def send(self, socket, type, body = None):
+        headers = self.makeHeaders(type)
+        self.__send(socket, headers, body)
 
-    def send(self, headers,socket, body = None):
+    def __send(self, socket, headers, body = None):
         if body is None:
             body = []
-        message = reduce((lambda msg, head: msg + head[0] + ":" + head[1] + "\n"), headers, "")
-        message = reduce((lambda msg, line: msg + line + "\n"), body, message)
+        appendHeader = lambda msg, head: msg + head[0] + ":" + head[1] + "\n"
+        appendBody   = lambda msg, line: msg + line + "\n"
+
+        message = reduce(appendHeader, headers, "")
+        message = reduce(appendBody, body, message)
 
         print message
-        pass
+        try:
+            socket.send(message)
+        except:
+            print "Error :3"
 
     def makeHeaders(self, type):
         return [ ("From", self.origin), ("Type", type) ]
