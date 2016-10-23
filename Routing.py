@@ -84,7 +84,7 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
                 print "No se pudo establecer conexión tcp con " + node.name + "(" + node.ip + ")"
                 print(e)
             else:
-                node.tx = TxChannel(node.name, MessageSender(Routing.SAY_MY_NAME), s)
+                node.tx = TxChannel(node.name, MessageSender(Routing.INSTANCE.SAY_MY_NAME), s)
                 node.tx.shortestPathProvider = self
 
     def initTable(self):
