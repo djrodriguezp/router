@@ -9,7 +9,7 @@ class Forwarding(Thread):
     def __init__(self):
         super(Forwarding, self).__init__()
         self.port = 1981
-        self.address = Routing.BIND_IP
+        self.address = Routing.INSTANCE.BIND_IP
 
     def fordwardMessage(self,neighborIP,data):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -39,11 +39,11 @@ class Forwarding(Thread):
                     print e.message
                 else:
                     if msg.type == "application":
-                        if msg.to == Routing.SAY_MY_NAME:
+                        if msg.to == Routing.INSTANCE.SAY_MY_NAME:
                             print "mensaje para miguelito recibido :D"
                         else:
                             try:
-                                path = Routing.shortestPaths[msg.to]
+                                path = Routing.INSTANCE.shortestPaths[msg.to]
                             except Exception:
                                 print "No route found to "+msg.to+" dropping message"
                             else:
