@@ -22,7 +22,9 @@ class TxChannel(NetChannel):
         self.messageSender.ownerName = self.name
         self.messageSender.send(self.socket, "HELLO")
         #TODO: check welcome
+        print "Waiting for welcome..."
         self.socket.recv(4096)
+        print "Welcome received"
         success = True
         while self.alive and success:
             sleep(Routing.Routing.INSTANCE.UPDATE_TIME_SEC)

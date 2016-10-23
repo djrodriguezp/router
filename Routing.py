@@ -110,12 +110,14 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
         #find the shortest path for every known node
         for to in self.table:
             min = self.shortestPaths[to].cost
-            for neighbor in self.table[to]:
-                curr = self.table[to][neighbor]
-                if curr < min:
-                    self.shortestPaths[to] = Path(neighbor, curr)
-                    min = curr
-
+            try:
+                for neighbor in self.table[to]:
+                    curr = self.table[to][neighbor]
+                    if curr < min:
+                        self.shortestPaths[to] = Path(neighbor, curr)
+                        min = curr
+            except:
+                print "meow"
         #serialize shortest paths with the 'changed' flag set
         lines = []
         for to in self.shortestPaths:
