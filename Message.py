@@ -10,7 +10,7 @@ class Message:
             raise Exception("Message too short")
 
         header1 = lines.pop(0)
-        headerMatch = re.match("^\s*From\s*:\s*(\w+)$", header1)
+        headerMatch = re.match("^From:(\w+)$", header1)
 
         if headerMatch:
             self.origin = headerMatch.group(1);
@@ -18,7 +18,7 @@ class Message:
             raise Exception("Invalid from header -> "+header1)
 
         header2 = lines.pop(0)
-        headerMatch = re.match("^\s*(To|Type)\s*:\s*(\w+)$", header2)
+        headerMatch = re.match("^(To|Type):(\w+)$", header2)
 
         if headerMatch:
             if headerMatch.group(1) == "Type":
@@ -28,10 +28,13 @@ class Message:
                     if self.type == "DV":
                         if len(lines) > 0:
                             routesLenght = lines.pop(0)
-                            headerMatch = re.match("^\s*Len\s*:\s*(\d+)$", routesLenght)
+                            headerMatch = re.match("^Len:(\d+)$", routesLenght)
 
                             if headerMatch:
                                 if len(lines) == int(headerMatch.group(1)):
+                                    for line in lines:
+                                        if re.match("^\w+:\d+$", line) is None:
+                                            raise Exception("Invalid route format -> "+line)
                                     self.message = lines
                                 else:
                                     raise Exception("Len header mismatch with the amount of routes received -> Len:"+headerMatch.group(1)+", routes received:" + str(len(lines)))
