@@ -19,6 +19,7 @@ class TxChannel(NetChannel):
         
 
     def run(self):
+        self.messageSender.ownerName = self.name
         self.messageSender.send(self.socket, "HELLO")
         #TODO: check welcome
         self.socket.recv(4096)

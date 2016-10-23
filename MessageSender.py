@@ -1,4 +1,6 @@
 class MessageSender:
+
+    ownerName = ""
     def __init__(self, origin):
         self.origin = origin
 
@@ -15,11 +17,12 @@ class MessageSender:
         message = reduce(appendHeader, headers, "")
         message = reduce(appendBody, body, message)
 
-        print "SENDING:"
+        print "SENDING FROM THREAD ", self.ownerName, ":"
         print message
         try:
             socket.send(message)
-        except:
+        except Exception as e:
+            print e
             return False
         else:
             return True
