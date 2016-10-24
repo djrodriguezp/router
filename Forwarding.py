@@ -42,9 +42,8 @@ class Forwarding(Thread):
                         if msg.to == Routing.INSTANCE.SAY_MY_NAME:
                             print "mensaje para miguelito recibido :D"
                         else:
-                            try:
-                                path = Routing.INSTANCE.shortestPaths[msg.to]
-                            except Exception:
+                            path = Routing.INSTANCE.shortestPaths[msg.to]
+                            if path is None:
                                 print "No route found to "+msg.to+" dropping message"
                             else:
                                 destIP = Routing.INSTANCE.findNeighbor(path.neighbor).ip
