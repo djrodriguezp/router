@@ -7,7 +7,7 @@ class SayHelloToMyLittleFriend
  {
     if(args.length == 4)
     {
-        String message = "From:"+args[1]+"\nTo:"+args[2]+"\nMsg:"+args[2]+"\nEOF";
+        String message = "From:"+args[1]+"\nTo:"+args[2]+"\nMsg:"+args[3]+"\nEOF";
         String response = "";
         BufferedReader inFromUser = new BufferedReader( new InputStreamReader(System.in));
         Socket clientSocket = new Socket(args[0], 1981);
