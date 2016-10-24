@@ -3,10 +3,10 @@ import java.net.*;
 
 class SayHelloToMyLittleFriend
 {
- public static void main(String argv[]) throws Exception
+ public static void main(String args[]) throws Exception
  {
-  //String message = "From:B\nTo:0xMiRoutersito\nMsg:como va todo parsers\nEOF";
-  String message = "From:Z\nTo:Y\nMsg:como va todo parsers\nEOF";
+  String message = "From:"+args[0]+"\n"+args[1]+":Y\nMsg:"+args[2]+"\nEOF";
+  System.out.println(message);
   String response = "";
   BufferedReader inFromUser = new BufferedReader( new InputStreamReader(System.in));
   Socket clientSocket = new Socket("192.168.1.18", 1981);
