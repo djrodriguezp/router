@@ -42,13 +42,17 @@ class Forwarding(Thread):
                         if msg.to == Routing.INSTANCE.SAY_MY_NAME:
                             print "mensaje para miguelito recibido :D"
                         else:
-                            path = Routing.INSTANCE.shortestPaths[msg.to]
-                            if path is None:
+                            try:
+                                path = Routing.INSTANCE.shortestPaths[msg.to]
+                            except Exception:
                                 print "No route found to "+msg.to+" dropping message"
                             else:
                                 destIP = Routing.INSTANCE.findNeighbor(path.neighbor).ip
-                                print "Forwarding message to "+msg.to+" through "+destIP+" ip "
-                                self.fordwardMessage(destIP, data)
+                                if destIP is not None:
+                                    print "Forwarding message to "+msg.to+" through "+destIP+" ip "
+                                    self.fordwardMessage(destIP, data)
+                                else:
+                                    print "No se ha sido posible encontrar la IP del nodo "+msg.to
                     else:
                         print "Message type "+msg.type+" received on port "+self.port+" from ", addr , " dropping message "
                 conn.close()
