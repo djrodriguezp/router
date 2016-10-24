@@ -47,8 +47,9 @@ class Forwarding(Thread):
                             except Exception:
                                 print "No route found to "+msg.to+" dropping message"
                             else:
-                                print "Forwarding message to "+msg.to+" through "+path.neighbor+" ip "
-                                self.fordwardMessage("192.168.1.18", data)
+                                destIP = Routing.INSTANCE.findNeighbor(path.neighbor).ip
+                                print "Forwarding message to "+msg.to+" through "+destIP+" ip "
+                                self.fordwardMessage(destIP, data)
                     else:
                         print "Message type "+msg.type+" received on port "+self.port+" from ", addr , " dropping message "
                 conn.close()
