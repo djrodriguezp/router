@@ -143,7 +143,9 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
                 self.table[to] = dmap
                 self.shortestPaths[to] = Path(origin, reportedCost)
             elif to == self.SAY_MY_NAME:
-                self.table[origin] = cost
+                dmap = self.createDistanceMap()
+                dmap[origin] = cost
+                self.table[origin] = dmap
 
     def findNeighbor(self, name):
         for neighbor in self.neighbors:
