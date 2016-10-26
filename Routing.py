@@ -136,9 +136,9 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
                 self.table[to] = dmap
                 self.shortestPaths[to] = Path(origin, reportedCost)
             elif to == self.SAY_MY_NAME:
-                dmap = self.createDistanceMap()
-                dmap[origin] = cost
-                self.table[origin] = dmap
+                if cost < self.shortestPaths[origin].cost:
+                    self.shortestPaths[origin] = Path(origin, cost)
+                self.table[origin][origin] = cost
             elif reportedCost < self.shortestPaths[to].cost:
                 self.shortestPaths[to] = Path(origin, reportedCost)
 
