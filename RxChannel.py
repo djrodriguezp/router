@@ -28,8 +28,8 @@ class RxChannel(NetChannel):
                         break
 
                 else:
-                    print "received " + msg.type + " message from " + msg.origin
-                    print msg.message
+                    #print "received " + msg.type + " message from " + msg.origin
+                    #print msg.message
                     if msg.type == "DV":
                         self.dvListener.receivedDVMessage(msg.message, msg.origin)
             else:
