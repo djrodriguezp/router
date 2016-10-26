@@ -80,16 +80,17 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
                 print(e)
             else:
                 print "Connected"
-                self.neighbors.append(node)
-                node.tx = TxChannel(node.name, MessageSender(Routing.INSTANCE.SAY_MY_NAME), s)
-                node.tx.shortestPathProvider = self
+                self.addNeighbor(node, s, True)
 
     def initTable(self):
         for n in self.neighbors:
-            dmap = self.createDistanceMap()
-            dmap[n.name] = n.cost
-            self.table[n.name] = dmap
-            self.shortestPaths[n.name] = Path(n.name, n.cost)
+            self.updateTableNode(n)
+
+    def updateTableNode(self, n):
+        dmap = self.createDistanceMap()
+        dmap[n.name] = n.cost
+        self.table[n.name] = dmap
+        self.shortestPaths[n.name] = Path(n.name, n.cost)
 
     def run(self):
         RoutingLobby(self.BIND_IP, self.ROUTING_PORT, self).start()
@@ -152,3 +153,15 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
         for to in self.shortestPaths:
             path = self.shortestPaths[to]
             print "to: " + to + " via: " + path.neighbor + " cost: " + str(path.cost)
+
+    def addNeighbor(self, node, socket, isFromConfig):
+        self.neighbors.append(node)
+        node.tx = TxChannel(node.name, MessageSender(Routing.INSTANCE.SAY_MY_NAME), socket)
+        node.tx.shortestPathProvider = self
+
+        for to in self.table:
+            self.table[to][node.name] = 99
+
+        if not isFromConfig:
+            self.updateTableNode(node)
+

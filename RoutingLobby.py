@@ -42,7 +42,13 @@ class RoutingLobby(Thread):
                     RxChannel(msg.origin, MessageSender(Routing.Routing.INSTANCE.SAY_MY_NAME), conn, self.dvListener).start()
                     neighbor = Routing.Routing.INSTANCE.findNeighbor(msg.origin)
                     if neighbor is None:
-                        pass #TODO: add neighbor
+                        newSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                        newSock.settimeout(2)
+                        newSock.connect((neighbor.ip, Routing.Routing.INSTANCE.ROUTING_PORT))
+                        node = Routing.Routing.INSTANCE.makeNode(msg.origin, 99, addr)
+                        Routing.Routing.INSTANCE.addNeighbor(node, newSock, False)
+                        node.tx.start()
+                    """
                     elif neighbor.tx is None:
                         newSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                         newSock.settimeout(2)
@@ -50,3 +56,4 @@ class RoutingLobby(Thread):
                         neighbor.tx = TxChannel(neighbor.name, MessageSender(Routing.Routing.INSTANCE.SAY_MY_NAME), newSock)
                         neighbor.tx.shortestPathProvider = Routing.Routing.INSTANCE
                         neighbor.tx.start()
+                    """
