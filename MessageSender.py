@@ -17,8 +17,8 @@ class MessageSender:
         message = reduce(appendHeader, headers, "")
         message = reduce(appendBody, body, message)
 
-        print "SENDING FROM THREAD ", self.ownerName, ":"
-        print message
+        #print "SENDING FROM THREAD ", self.ownerName, ":"
+        #print message
         try:
             socket.send(message)
         except Exception as e:
