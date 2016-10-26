@@ -23,6 +23,10 @@ class RxChannel(NetChannel):
                 except Exception as e:
                     print "Malformed DV or KeepAlive message from ", self.name
                     print e.message
+                    if data == "":
+                        print "Dying because of empty message"
+                        break
+
                 else:
                     print "received " + msg.type + " message from " + msg.origin
                     print msg.message

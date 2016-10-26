@@ -23,6 +23,7 @@ class TxChannel(NetChannel):
         self.messageSender.send(self.socket, "HELLO")
         #TODO: check welcome
         print "Waiting for welcome..."
+        self.socket.settimeout(None)
         data = self.socket.recv(4096)
         print "Welcome received:\n", data
         success = True

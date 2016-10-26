@@ -1,5 +1,6 @@
 # coding=utf-8
 import socket
+import threading
 
 from MessageSender import MessageSender
 from RoutingLobby import RoutingLobby
@@ -17,7 +18,9 @@ class Path:
         pass
 
     def shouldSendUpdate(self, txName):
+        print txName, " is checking to send update"
         if txName not in self.alreadySent:
+            print self.neighbor, "adding " + txName
             self.alreadySent.append(txName)
             return True
         return False
@@ -59,6 +62,7 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
     def __init__(self):
         Routing.INSTANCE = self
         self.neighbors = []
+        self.tableLock = threading.Lock()
 
     def makeNode(self, nodeData):
         return Node(nodeData[0],nodeData[1],nodeData[2])
@@ -110,14 +114,11 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
         #find the shortest path for every known node
         for to in self.table:
             min = self.shortestPaths[to].cost
-            try:
-                for neighbor in self.table[to]:
-                    curr = self.table[to][neighbor]
-                    if curr < min:
-                        self.shortestPaths[to] = Path(neighbor, curr)
-                        min = curr
-            except:
-                print "meow"
+            for neighbor in self.table[to]:
+                curr = self.table[to][neighbor]
+                if curr < min:
+                    self.shortestPaths[to] = Path(neighbor, curr)
+                    min = curr
         #serialize shortest paths with the 'changed' flag set
         lines = []
         for to in self.shortestPaths:
