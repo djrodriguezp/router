@@ -70,7 +70,6 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
             if len(nodeData) != 3:
                 raise AssertionError("Expected 3 values delimited by ; at line " + str(line_no + 1) + " file: " + filename)
             node = self.makeNode(nodeData)
-            self.neighbors.append(node)
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             try:
                 print "Trying to connect to ", node.ip, node.name
@@ -81,6 +80,7 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
                 print(e)
             else:
                 print "Connected"
+                self.neighbors.append(node)
                 node.tx = TxChannel(node.name, MessageSender(Routing.INSTANCE.SAY_MY_NAME), s)
                 node.tx.shortestPathProvider = self
 

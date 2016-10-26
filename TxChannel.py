@@ -1,3 +1,5 @@
+import select
+
 from NetChannel import NetChannel
 from time import sleep
 import Routing
@@ -24,14 +26,16 @@ class TxChannel(NetChannel):
         #TODO: check welcome
         print "Waiting for welcome..."
         self.socket.settimeout(None)
-        data = self.socket.recv(4096)
-        print "Welcome received:\n", data
-        success = True
-        while self.alive and success:
-            sleep(Routing.Routing.INSTANCE.UPDATE_TIME_SEC)
-            self.checkForNewShortestPath()
-            success = self.alive and (self.sendUpdateIfNeeded() or self.messageSender.send(self.socket, "KeepAlive"))
-        print self.name + " Dying :("
+        ready = select.select([self.socket], [], [])
+        if ready[0]:
+            data = self.socket.recv(4096)
+            print "Welcome received:\n", data
+            success = True
+            while self.alive and success:
+                sleep(Routing.Routing.INSTANCE.UPDATE_TIME_SEC)
+                self.checkForNewShortestPath()
+                success = self.alive and (self.sendUpdateIfNeeded() or self.messageSender.send(self.socket, "KeepAlive"))
+            print self.name + " Dying :("
 
     def checkForNewShortestPath(self):
         if self.shortestPathProvider is not None:
