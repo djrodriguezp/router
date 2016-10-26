@@ -7,14 +7,10 @@ from RoutingLobby import RoutingLobby
 from TxChannel import TxChannel
 
 class Path:
-    changed = True
-    cost = 99
-    neighbor = None
-    alreadySent = []
-
     def __init__(self, neighbor, cost = 99):
         self.neighbor = neighbor
         self.cost = cost
+        self.alreadySent = []
         pass
 
     def shouldSendUpdate(self, txName):
@@ -27,15 +23,11 @@ class Path:
 
 
 class Node:
-    tx = None
-    name = None
-    cost = None
-    ip = None
-
     def __init__(self, name, cost, ip):
         self.name = name
         self.cost = int(cost)
         self.ip = ip
+        self.tx = None
 
 class ShortestPathProvider:
 
@@ -80,8 +72,8 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
             if len(nodeData) != 3:
                 raise AssertionError("Expected 3 values delimited by ; at line " + str(line_no + 1) + " file: " + filename)
             node = self.makeNode(nodeData)
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.neighbors.append(node)
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             try:
                 print "Trying to connect to ", node.ip, node.name
                 s.settimeout(2)
