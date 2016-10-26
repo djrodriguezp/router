@@ -14,9 +14,7 @@ class Path:
         pass
 
     def shouldSendUpdate(self, txName):
-        print txName, " is checking to send update"
         if txName not in self.alreadySent:
-            print self.neighbor, "adding " + txName
             self.alreadySent.append(txName)
             return True
         return False
@@ -120,7 +118,7 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
 
         if len(lines) > 0:
             print "The following shortest paths changed: " , lines
-        print "Current shortest paths", self.shortestPaths
+        self.printShortestPaths()
 
         return lines
 
@@ -148,3 +146,9 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
             if neighbor.name == name:
                 return neighbor
         return None
+
+    def printShortestPaths(self):
+        print "Current shortest paths"
+        for to in self.shortestPaths:
+            path = self.shortestPaths[to]
+            print "to: " + to + " via: " + path.neighbor + " cost: " + str(path.cost)
