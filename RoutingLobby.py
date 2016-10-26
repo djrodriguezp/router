@@ -44,8 +44,8 @@ class RoutingLobby(Thread):
                     if neighbor is None:
                         newSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                         newSock.settimeout(2)
-                        newSock.connect((addr, Routing.Routing.INSTANCE.ROUTING_PORT))
-                        node = Routing.Routing.INSTANCE.makeNode(msg.origin, 99, addr)
+                        newSock.connect((addr[0], Routing.Routing.INSTANCE.ROUTING_PORT))
+                        node = Routing.Routing.INSTANCE.makeNode(msg.origin, 99, addr[0])
                         Routing.Routing.INSTANCE.addNeighbor(node, newSock, False)
                         node.tx.start()
                     """
