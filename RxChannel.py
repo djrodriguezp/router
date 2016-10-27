@@ -15,7 +15,7 @@ class RxChannel(NetChannel):
         self.messageSender.ownerName = self.name
         self.messageSender.send(self.socket, "WELCOME")
         while True:
-            ready = select.select([self.socket], [], [], Routing.Routing.INSTANCE.UPDATE_TIME_SEC * 6)
+            ready = select.select([self.socket], [], [], Routing.Routing.INSTANCE.UPDATE_TIME_SEC * 3)
             if ready[0]:
                 data = self.socket.recv(1024)
                 try:
