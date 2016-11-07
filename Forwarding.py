@@ -9,6 +9,7 @@ class Forwarding(Thread):
     def __init__(self):
         super(Forwarding, self).__init__()
         self.port = 1981
+        self.appPort = 1982
         self.address = Routing.INSTANCE.BIND_IP
 
     def fordwardMessage(self,neighborIP,data):
@@ -18,6 +19,18 @@ class Forwarding(Thread):
             s.send(data)
         except Exception as e:
             print "Error forwardeando"
+        s.close()
+
+    def send2App(self,origin,message):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            s.connect((self.address, self.appPort))
+            data = "From:"+origin+"\n"
+            for line in message:
+                data += line+"\n"
+            s.send(data)
+        except Exception as e:
+            print "Error enviando mensaje a app"
         s.close()
 
     def run(self):
@@ -40,7 +53,7 @@ class Forwarding(Thread):
                 else:
                     if msg.type == "application":
                         if msg.to == Routing.INSTANCE.SAY_MY_NAME:
-                            print "mensaje para miguelito recibido :D"
+                            self.send2App(msg.origin, msg.message)
                         else:
                             try:
                                 path = Routing.INSTANCE.shortestPaths[msg.to]

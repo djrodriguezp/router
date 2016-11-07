@@ -49,8 +49,15 @@ class Message:
                 self.type = "application"
                 self.to = headerMatch.group(2)
                 if len(lines) > 0:
-                    if re.match("^\s*Msg\s*:\s*.*$", lines[0]) is not None:
-                        self.message = list(lines)
+                    headerMatch = re.match("^\s*Msg\s*:\s*(.*)$", lines[0])
+                    #eliminamos la cabecera Msg y EOF
+                    if headerMatch is not None:
+                        lines[0] = headerMatch.group(1)
+                        lastLine = lines.pop()
+                        if re.match("^\s*EOF\s*$", lastLine):
+                            self.message = list(lines)
+                        else:
+                            raise Exception("EOF not found in message")
                     else:
                         raise Exception("Invalid Msg header -> " + lines[0])
                 else:
