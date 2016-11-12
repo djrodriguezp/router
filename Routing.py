@@ -52,7 +52,7 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
     def __init__(self):
         Routing.INSTANCE = self
         self.neighbors = []
-        self.tableLock = threading.Lock()
+        self.tableLock = threading.RLock()
 
     def makeNode(self, nodeData):
         return Node(nodeData[0],nodeData[1],nodeData[2])
@@ -87,10 +87,11 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
             self.updateTableNode(n)
 
     def updateTableNode(self, n):
-        dmap = self.createDistanceMap()
-        dmap[n.name] = n.cost
-        self.table[n.name] = dmap
-        self.shortestPaths[n.name] = Path(n.name, n.cost)
+        with self.tableLock:
+            dmap = self.createDistanceMap()
+            dmap[n.name] = n.cost
+            self.table[n.name] = dmap
+            self.shortestPaths[n.name] = Path(n.name, n.cost)
 
     def run(self):
         RoutingLobby(self.BIND_IP, self.ROUTING_PORT, self).start()
@@ -102,52 +103,55 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
             node.tx.start()
 
     def getNewShortestPaths(self, txName):
-        #find the shortest path for every known node
-        for to in self.table:
-            min = self.shortestPaths[to].cost
-            for neighbor in self.table[to]:
-                curr = self.table[to][neighbor]
-                if curr < min:
-                    self.shortestPaths[to] = Path(neighbor, curr)
-                    min = curr
-        #serialize shortest paths with the 'changed' flag set
-        lines = []
-        for to in self.shortestPaths:
-            curr = self.shortestPaths[to]
-            if curr.shouldSendUpdate(txName):
-                lines.append(to + ":" + str(curr.cost))
+        with self.tableLock:
+            #find the shortest path for every known node
+            for to in self.table:
+                min = self.shortestPaths[to].cost
+                for neighbor in self.table[to]:
+                    curr = self.table[to][neighbor]
+                    if curr < min:
+                        self.shortestPaths[to] = Path(neighbor, curr)
+                        min = curr
+            #serialize shortest paths with the 'changed' flag set
+            lines = []
+            for to in self.shortestPaths:
+                curr = self.shortestPaths[to]
+                if curr.shouldSendUpdate(txName):
+                    lines.append(to + ":" + str(curr.cost))
 
-        if len(lines) > 0:
-            print "The following shortest paths changed: " , lines
-        self.printShortestPaths()
+            if len(lines) > 0:
+                print "The following shortest paths changed: " , lines
+            self.printShortestPaths()
 
-        return lines
+            return lines
 
     def receivedDVMessage(self, dvmsg, origin):
-        dvmsg = map(lambda x: x.split(":"), dvmsg)
-        for line in dvmsg:
-            to = line[0]
-            cost = int(line[1])
+        with self.tableLock:
+            dvmsg = map(lambda x: x.split(":"), dvmsg)
+            for line in dvmsg:
+                to = line[0]
+                cost = int(line[1])
 
-            #ARREGLAR CUANDO TE MANDAN TU PROPIO NOMBRE
-            reportedCost = self.shortestPaths[origin].cost + cost
-            if to not in self.shortestPaths and to != self.SAY_MY_NAME:
-                dmap = self.createDistanceMap()
-                dmap[origin] = reportedCost
-                self.table[to] = dmap
-                self.shortestPaths[to] = Path(origin, reportedCost)
-            elif to == self.SAY_MY_NAME:
-                if cost < self.shortestPaths[origin].cost:
-                    self.shortestPaths[origin] = Path(origin, cost)
-                self.table[origin][origin] = cost
-            elif reportedCost < self.shortestPaths[to].cost:
-                self.shortestPaths[to] = Path(origin, reportedCost)
+                #ARREGLAR CUANDO TE MANDAN TU PROPIO NOMBRE
+                reportedCost = self.shortestPaths[origin].cost + cost
+                if to not in self.shortestPaths and to != self.SAY_MY_NAME:
+                    dmap = self.createDistanceMap()
+                    dmap[origin] = reportedCost
+                    self.table[to] = dmap
+                    self.shortestPaths[to] = Path(origin, reportedCost)
+                elif to == self.SAY_MY_NAME:
+                    if cost < self.shortestPaths[origin].cost:
+                        self.shortestPaths[origin] = Path(origin, cost)
+                    self.table[origin][origin] = cost
+                elif reportedCost < self.shortestPaths[to].cost:
+                    self.shortestPaths[to] = Path(origin, reportedCost)
 
     def findNeighbor(self, name):
-        for neighbor in self.neighbors:
-            if neighbor.name == name:
-                return neighbor
-        return None
+        with self.tableLock:
+            for neighbor in self.neighbors:
+                if neighbor.name == name:
+                    return neighbor
+            return None
 
     def printShortestPaths(self):
         print "Current shortest paths"
@@ -156,13 +160,14 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
             print "to: " + to + " via: " + path.neighbor + " cost: " + str(path.cost)
 
     def addNeighbor(self, node, socket, isFromConfig):
-        self.neighbors.append(node)
-        node.tx = TxChannel(node.name, MessageSender(Routing.INSTANCE.SAY_MY_NAME), socket)
-        node.tx.shortestPathProvider = self
+        with self.tableLock:
+            self.neighbors.append(node)
+            node.tx = TxChannel(node.name, MessageSender(Routing.INSTANCE.SAY_MY_NAME), socket)
+            node.tx.shortestPathProvider = self
 
-        for to in self.table:
-            self.table[to][node.name] = 99
+            for to in self.table:
+                self.table[to][node.name] = 99
 
-        if not isFromConfig:
-            self.updateTableNode(node)
+            if not isFromConfig:
+                self.updateTableNode(node)
 
