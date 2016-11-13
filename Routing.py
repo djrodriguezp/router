@@ -134,7 +134,7 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
 
                 #ARREGLAR CUANDO TE MANDAN TU PROPIO NOMBRE
                 reportedCost = 99
-                if origin == to and self.findNeighbor(origin) is not None:
+                if to == self.SAY_MY_NAME and self.findNeighbor(origin) is not None:
                     reportedCost = cost
                 else:
                     reportedCost = self.shortestPaths[origin].cost + cost
