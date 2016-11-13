@@ -1,6 +1,7 @@
 from Routing import Routing
 from Forwarding import Forwarding
 from Logger import Logger
+from ConfManager import ConfManager
 
 def start():
     routingModule = Routing()
@@ -14,6 +15,8 @@ def start():
         elif line.startswith("routerName:"):
             routingModule.SAY_MY_NAME = line.split(":")[1]
 
+    confManager = ConfManager(routingModule.BIND_IP, 1983)
+    confManager.start()
     Logger(routingModule.BIND_IP, 1984)
     routingModule.run()
     forwardingModule = Forwarding()
