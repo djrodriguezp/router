@@ -2,6 +2,7 @@
 import socket
 import threading
 
+from Logger import Logger
 from MessageSender import MessageSender
 from RoutingLobby import RoutingLobby
 from TxChannel import TxChannel
@@ -72,7 +73,7 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
             node = self.makeNode(nodeData)
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             try:
-                print "Trying to connect to ", node.ip, node.name
+                Logger.INSTANCE.write("Trying to connect to " + node.ip + " " +node.name)
                 s.settimeout(2)
                 s.connect((node.ip, Routing.INSTANCE.ROUTING_PORT))
             except Exception as e:
@@ -160,9 +161,14 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
 
     def printShortestPaths(self):
         print "Current shortest paths"
+        lines = []
         for to in self.shortestPaths:
             path = self.shortestPaths[to]
-            print "to: " + to + " via: " + path.neighbor + " cost: " + str(path.cost)
+            msg = "to: " + to + " via: " + path.neighbor + " cost: " + str(path.cost)
+            lines.append(msg)
+            print msg
+
+        Logger.INSTANCE.write("SP", lines)
 
     def addNeighbor(self, node, socket, isFromConfig):
         with self.tableLock:
