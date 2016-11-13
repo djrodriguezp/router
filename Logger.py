@@ -3,6 +3,9 @@ import socket
 class Logger:
 
     INSTANCE = None
+    DV = "DV"
+    PATHS = "SP"
+    NEIGHBORS = "N"
 
     def __init__(self, ip, port):
         self.ip = ip
@@ -11,13 +14,16 @@ class Logger:
 
     def write(self, msg, lines = []):
         appendLines = lambda m,line: m + line + "\n"
-        MESSAGE = reduce(appendLines, lines, msg)
+        MESSAGE = reduce(appendLines, lines, msg + "\n")
 
         print msg + "\n"
         for l in lines:
             print l + "\n"
 
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((self.ip, self.port))
-        s.send(MESSAGE)
-        s.close()
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((self.ip, self.port))
+            s.send(MESSAGE)
+            s.close()
+        except Exception as e:
+            print e

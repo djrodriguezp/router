@@ -120,8 +120,6 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
                 if curr.shouldSendUpdate(txName):
                     lines.append(to + ":" + str(curr.cost))
 
-            if len(lines) > 0:
-                print "The following shortest paths changed: " , lines
             self.printShortestPaths()
 
             return lines
@@ -164,11 +162,11 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
         lines = []
         for to in self.shortestPaths:
             path = self.shortestPaths[to]
-            msg = "to: " + to + " via: " + path.neighbor + " cost: " + str(path.cost)
+            msg = "to: " + to + "; via: " + path.neighbor + "; cost: " + str(path.cost)
             lines.append(msg)
             print msg
 
-        Logger.INSTANCE.write("SP", lines)
+        Logger.INSTANCE.write(Logger.PATHS, lines)
 
     def addNeighbor(self, node, socket, isFromConfig):
         with self.tableLock:
