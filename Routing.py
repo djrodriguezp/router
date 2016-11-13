@@ -133,7 +133,12 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
                 cost = int(line[1])
 
                 #ARREGLAR CUANDO TE MANDAN TU PROPIO NOMBRE
-                reportedCost = self.shortestPaths[origin].cost + cost
+                reportedCost = 99;
+                if self.findNeighbor(origin) is not None:
+                    reportedCost = cost
+                else:
+                    reportedCost = self.shortestPaths[origin].cost + cost
+                    
                 if to not in self.shortestPaths and to != self.SAY_MY_NAME:
                     dmap = self.createDistanceMap()
                     dmap[origin] = reportedCost
