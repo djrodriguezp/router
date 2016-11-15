@@ -44,6 +44,7 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
     SAY_MY_NAME = "NONAME"
     BIND_IP = "127.0.0.1"
     UPDATE_TIME_SEC = 30
+    TIMEOUT = 90
     table = {}
 
     INSTANCE = None

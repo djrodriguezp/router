@@ -8,8 +8,11 @@ def start():
     f = open("router.conf", "r")
     for line_no, line in enumerate(f):
         line = line.strip()
+
         if line.startswith("updateTimeSeconds:"):
             routingModule.UPDATE_TIME_SEC = int(line.split(":")[1])
+        if line.startswith("timeoutSeconds:"):
+            routingModule.TIMEOUT = int(line.split(":")[1])
         elif line.startswith("bindIp:"):
             routingModule.BIND_IP = line.split(":")[1]
         elif line.startswith("routerName:"):
