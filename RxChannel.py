@@ -9,12 +9,15 @@ class RxChannel(NetChannel):
         self.socket = socket
         self.messageSender = messageSender
         self.dvListener = dvListener
+        self.alive = True
 
+    def die(self):
+        self.alive = False
 
     def run(self):
         self.messageSender.ownerName = self.name
         self.messageSender.send(self.socket, "WELCOME")
-        while True:
+        while self.alive:
             ready = select.select([self.socket], [], [], Routing.Routing.INSTANCE.TIMEOUT)
             if ready[0]:
                 data = self.socket.recv(1024)
