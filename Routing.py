@@ -170,7 +170,7 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
             path = self.shortestPaths[to]
             msg = "to: " + to + "; via: " + path.neighbor + "; cost: " + str(path.cost)
             lines.append(msg)
-            print msg
+            #print msg
 
         Logger.INSTANCE.write(Logger.PATHS, lines)
 

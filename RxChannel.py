@@ -1,5 +1,6 @@
 from Message import Message
 from NetChannel import NetChannel
+from Logger import Logger
 import Routing
 import select
 
@@ -35,6 +36,8 @@ class RxChannel(NetChannel):
                     print msg.message
                     if msg.type == "DV":
                         self.dvListener.receivedDVMessage(msg.message, msg.origin)
+                    elif msg.type == "KeepAlive":
+                        Logger.INSTANCE.write(Logger.KEEPALIVE, ["From:" + msg.origin])
             else:
                 print "Timeout"
                 break
