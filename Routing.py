@@ -27,6 +27,7 @@ class Node:
         self.cost = int(cost)
         self.ip = ip
         self.tx = None
+        self.rx = None
 
 class ShortestPathProvider:
 
