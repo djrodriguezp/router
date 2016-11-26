@@ -39,8 +39,9 @@ class RoutingLobby(Thread):
                     print e.message
                 else:
                     print 'Accepted HELLO from: ', addr
-                    RxChannel(msg.origin, MessageSender(Routing.Routing.INSTANCE.SAY_MY_NAME), conn, self.dvListener).start()
                     neighbor = Routing.Routing.INSTANCE.findNeighbor(msg.origin)
+                    neighbor.rx = RxChannel(msg.origin, MessageSender(Routing.Routing.INSTANCE.SAY_MY_NAME), conn, self.dvListener)
+                    neighbor.rx.start()
                     if neighbor is None:
                         newSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                         newSock.settimeout(2)

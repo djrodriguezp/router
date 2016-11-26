@@ -38,6 +38,40 @@ class ConfManager(Thread):
                         message = "OK"
                     except Exception as e:
                         message = "ERROR "+e.message
+                if data.startswith("AddNode"):
+                    try:
+                        data = data.rstrip("\n")
+                        nodeData = data.split("|")
+                        nodeData.pop(0)
+
+                        for neighbor in Routing.INSTANCE.neighbors:
+                            if neighbor.name == nodeData[0]:
+                                raise Exception("el vecino "+nodeData[0]+" ya se encuentra agregado como vecino")
+                            if neighbor.ip == nodeData[2]:
+                                raise Exception("la IP "+nodeData[2]+" ya se encuentra agregada como vecino")
+
+                        node = Routing.INSTANCE.makeNode(nodeData)
+                        if Routing.INSTANCE.connectNode(node):
+                            message = "OK"
+                        else:
+                            message = "No ha sido posible conectarse con el nuevo vecino"
+                    except Exception as e:
+                        message = "ERROR "+e.message
+                if data.startswith("RemoveNode"):
+                    try:
+                        data = data.rstrip("\n")
+                        nodeData = data.split("|")
+                        neighbor = Routing.INSTANCE.findNeighbor(nodeData[1])
+                        if neighbor is not None:
+                            if neighbor.tx is not None:
+                                neighbor.tx.die()
+                            if neighbor.rx is not None:
+                                neighbor.rx.die()
+                            message = "OK"
+                        else:
+                            message = "vecino no encontrado"
+                    except Exception as e:
+                        message = +e.message
                 message += "\n"
                 conn.send(message)
                 conn.close()
@@ -46,5 +80,6 @@ class ConfManager(Thread):
         nList = ""
         for neighbor in Routing.INSTANCE.neighbors:
             nList += neighbor.name + ":" + neighbor.ip + ":"+str(neighbor.cost)+";"
-        #nList += "A:192.168.1.1:10;B:192.168.1.1:9;C:192.168.1.3:5;"
+
         return nList
+
