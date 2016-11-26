@@ -72,17 +72,22 @@ class Routing(ShortestPathProvider, DistanceVectorListener):
             if len(nodeData) != 3:
                 raise AssertionError("Expected 3 values delimited by ; at line " + str(line_no + 1) + " file: " + filename)
             node = self.makeNode(nodeData)
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            try:
-                Logger.INSTANCE.write("Trying to connect to " + node.ip + " " +node.name)
-                s.settimeout(2)
-                s.connect((node.ip, Routing.INSTANCE.ROUTING_PORT))
-            except Exception as e:
-                print "No se pudo establecer conexión tcp con " + node.name + "(" + node.ip + ")"
-                print(e)
-            else:
-                print "Connected"
-                self.addNeighbor(node, s, True)
+            self.connectNode(node)
+
+    def connectNode(self, node):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            Logger.INSTANCE.write("Trying to connect to " + node.ip + " " + node.name)
+            s.settimeout(2)
+            s.connect((node.ip, Routing.INSTANCE.ROUTING_PORT))
+        except Exception as e:
+            print "No se pudo establecer conexión tcp con " + node.name + "(" + node.ip + ")"
+            print(e)
+            return False
+        else:
+            print "Connected"
+            self.addNeighbor(node, s, True)
+            return True
 
     def initTable(self):
         for n in self.neighbors:
