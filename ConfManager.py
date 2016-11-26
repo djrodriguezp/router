@@ -21,3 +21,7 @@ class ConfManager(Thread):
             ready = select.select([conn], [], [])
             if ready[0]:
                 data = conn.recv(1024)
+                print "received conf command"
+                if data.startswith("GetConf"):
+                    conn.send("10|30|A,B,C,D\n")
+                conn.close()
