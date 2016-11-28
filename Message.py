@@ -2,7 +2,8 @@ import re
 class Message:
     def __init__(self, string):
         self.message = None
-        #print "Parsing text: ", string
+        self.text = string
+        print "Parsing text: ", string
         if string.endswith("\n"):
             string = string.rstrip("\n")
 

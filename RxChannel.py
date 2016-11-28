@@ -36,6 +36,10 @@ class RxChannel(NetChannel):
                     print msg.message
                     if msg.type == "DV":
                         self.dvListener.receivedDVMessage(msg.message, msg.origin)
+                        log = ["From:" + msg.origin]
+                        log += msg.message
+
+                        Logger.INSTANCE.write(Logger.DV, log)
                     elif msg.type == "KeepAlive":
                         Logger.INSTANCE.write(Logger.KEEPALIVE, ["From:" + msg.origin])
             else:

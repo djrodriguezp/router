@@ -53,6 +53,7 @@ class ConfManager(Thread):
                         node = Routing.INSTANCE.makeNode(nodeData)
                         if Routing.INSTANCE.connectNode(node):
                             message = "OK"
+                            node.tx.start()
                         else:
                             message = "No ha sido posible conectarse con el nuevo vecino"
                     except Exception as e:
